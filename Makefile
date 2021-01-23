@@ -1,7 +1,9 @@
-CC= /home/npe/etc/arm-none-eabi/bin/arm-none-eabi-gcc
+CC= arm-none-eabi-gcc
+LD= arm-none-eabi-ld
 CC_FLAGS= -mtune=cortex-m3 -mthumb -Werror
+LD_FLAGS= -T link.ld
 
-all: main.o startup.o
+all: main.o startup.o final.elf
 
 #compile and assemble. do not link
 main.o: main.c
@@ -9,6 +11,9 @@ main.o: main.c
 
 startup.o: startup.c
 	$(CC) $(CC_FLAGS) -c -o  $@ $^
+
+final.elf:
+	$(LD) $(LD_FLAGS) -o $@ *.o
 
 clean:
 	rm -rf *.o *.elf

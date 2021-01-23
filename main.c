@@ -1,6 +1,6 @@
 
 int static_array[10];
-int y = 0;
+int y = 123;
 
 void increment_y() {
     y++;
