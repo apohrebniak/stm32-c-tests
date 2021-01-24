@@ -25,4 +25,5 @@ SECTIONS
         . = ALIGN(4);
         _bss_end = .;
     } > RAM
+    _lma_data = LOADADDR(.data);
 }

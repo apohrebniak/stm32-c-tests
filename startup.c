@@ -7,8 +7,16 @@
 #define SRAM_END 0x3FFFFFFF
 #define STACK_START SRAM_END
 
+extern uint8_t _data_start;
+extern uint8_t _data_end;
+extern uint8_t _bss_start;
+extern uint8_t _bss_end;
+
+extern uint8_t _lma_data;
+
 void reset_handler(void);
 void noop_handler(void);
+void main(void);
 
 uint32_t vector_table[] __attribute__ ((section (".vctr"))) = {
         STACK_START,
@@ -98,6 +106,21 @@ void noop_handler() {
 }
 
 void reset_handler() {
-
+     // copy .data
+     uint8_t *p_dst = (uint8_t*)&_data_start;
+     uint8_t *p_src = (uint8_t*)&_lma_data;
+     while (p_dst != (uint8_t*)&_data_end)
+     {
+         *p_dst++ = *p_src++;
+     }
+     
+     // init bss
+     p_dst = (uint8_t*)&_bss_start;
+     while (p_dst != (uint8_t*)&_bss_end)
+     {
+         *p_dst++ = 0;
+     }
+     
+     main();
 }
 
