@@ -4,16 +4,16 @@
 #include <stdint.h>
 
 #define SRAM_START  0x20000000U
-#define SRAM_SIZE   (128U * 1024U) //128KB
+#define SRAM_SIZE   (20U * 1024U) //20KB
 #define SRAM_END    ((SRAM_START) + (SRAM_SIZE))
 #define STACK_START SRAM_END
 
-extern uint8_t _data_start;
-extern uint8_t _data_end;
-extern uint8_t _bss_start;
-extern uint8_t _bss_end;
+extern uint32_t _data_start;
+extern uint32_t _data_end;
+extern uint32_t _bss_start;
+extern uint32_t _bss_end;
 
-extern uint8_t _lma_data;
+extern uint32_t _lma_data;
 
 void reset_handler(void);
 void noop_handler(void);
