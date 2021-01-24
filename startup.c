@@ -3,8 +3,9 @@
 //
 #include <stdint.h>
 
-#define SRAM_START 0x20000000
-#define SRAM_END 0x3FFFFFFF
+#define SRAM_START  0x20000000U
+#define SRAM_SIZE   (20U * 1024U) //20KB
+#define SRAM_END    ((SRAM_START) + (SRAM_SIZE))
 #define STACK_START SRAM_END
 
 extern uint8_t _data_start;
@@ -106,21 +107,25 @@ void noop_handler() {
 }
 
 void reset_handler() {
-     // copy .data
-     uint8_t *p_dst = (uint8_t*)&_data_start;
-     uint8_t *p_src = (uint8_t*)&_lma_data;
-     while (p_dst != (uint8_t*)&_data_end)
-     {
-         *p_dst++ = *p_src++;
-     }
-     
-     // init bss
-     p_dst = (uint8_t*)&_bss_start;
-     while (p_dst != (uint8_t*)&_bss_end)
-     {
-         *p_dst++ = 0;
-     }
-     
-     main();
+     //copy .data section to SRAM
+	uint32_t size = (uint32_t)&_data_end - (uint32_t)&_data_start;
+	
+	uint8_t *pDst = (uint8_t*)&_data_start; //sram
+	uint8_t *pSrc = (uint8_t*)&_lma_data; //flash
+	
+	for(uint32_t i =0 ; i < size ; i++)
+	{
+		*pDst++ = *pSrc++;
+	}
+	
+	//Init. the .bss section to zero in SRAM
+	size = (uint32_t)&_bss_end - (uint32_t)&_bss_start;
+	pDst = (uint8_t*)&_bss_start;
+	for(uint32_t i =0 ; i < size ; i++)
+	{
+		*pDst++ = 0;
+	}
+
+	main();
 }
 
